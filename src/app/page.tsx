@@ -1,69 +1,195 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+
+const WorkoutBody = () => {
+  const [workouts, setWorkouts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchWorkouts = async () => {
+      try {
+        const res = await fetch(
+          "https://api.abcz.workers.dev/api/fitlog"
+        );
+
+        const data = await res.json();
+        setWorkouts(data);
+      } catch (error) {
+        console.error("Failed to fetch workouts:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWorkouts();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0B0D10] flex items-center justify-center">
+        <span className="loading loading-spinner text-[#B7FF00] loading-lg"></span>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="min-h-screen bg-[#0B0D10] text-white px-6 lg:px-12 py-10">
+
+      {/* Hero / Heading */}
+      <section className="mb-10">
+
+        <p className="text-[#B7FF00] text-sm font-semibold uppercase tracking-widest mb-3">
+          WORKOUT LIBRARY
+        </p>
+
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+
+          <div>
+            <h1 className="text-4xl lg:text-5xl font-bold">
+              TRAIN WITH INTENT. LOG
+              EVERY SET.
+            </h1>
+
+            <p className="text-[#7D838C] mt-3 max-w-xl">
+              FitLog is a dark, no-nonsense gym companion: pick a lift, lock it
+              into today's plan, and watch the week's work add up.
+            </p>
+          </div>
+
+          <div className="text-sm text-[#7D838C]">
+            {workouts.length} workouts available
+          </div>
+
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      </section>
+
+
+      {/* Filter buttons */}
+      <section className="flex flex-wrap gap-3 mb-8">
+
+        <button className="px-5 py-2.5 rounded-lg bg-[#B7FF00] text-[#0B0D10] font-semibold text-sm">
+          All
+        </button>
+
+        <button className="px-5 py-2.5 rounded-lg bg-[#12161B] border border-[#292E35] text-[#A6ABB3] hover:text-white transition text-sm">
+          Beginner
+        </button>
+
+        <button className="px-5 py-2.5 rounded-lg bg-[#12161B] border border-[#292E35] text-[#A6ABB3] hover:text-white transition text-sm">
+          Intermediate
+        </button>
+
+        <button className="px-5 py-2.5 rounded-lg bg-[#12161B] border border-[#292E35] text-[#A6ABB3] hover:text-white transition text-sm">
+          Advanced
+        </button>
+
+      </section>
+
+
+      {/* Workout Cards */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+
+        {workouts.map((workout) => (
+
+          <article
+            key={workout.id}
+            className="group bg-[#12161B] border border-[#20242A] rounded-2xl overflow-hidden hover:border-[#B7FF00]/50 transition duration-300"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+
+            {/* Image */}
+            <div className="relative h-52 overflow-hidden">
+
+              <img
+                src={workout.image}
+                alt={workout.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+              />
+
+              {/* Difficulty */}
+              <div className="absolute top-3 left-3">
+                <span className="px-3 py-1.5 rounded-full bg-[#0B0D10]/80 backdrop-blur-sm text-xs font-medium text-[#B7FF00]">
+                  {workout.difficulty}
+                </span>
+              </div>
+
+              {/* Rating */}
+              <div className="absolute top-3 right-3">
+                <span className="px-3 py-1.5 rounded-full bg-[#0B0D10]/80 backdrop-blur-sm text-xs text-white">
+                  ★ {workout.rating}
+                </span>
+              </div>
+
+            </div>
+
+
+            {/* Card Content */}
+            <div className="p-5">
+
+              <h2 className="text-lg font-bold text-white mb-2">
+                {workout.name}
+              </h2>
+
+              {/* Muscle Groups */}
+              <div className="flex flex-wrap gap-2 mb-4">
+
+                {workout.muscleGroups.map((muscle) => (
+                  <span
+                    key={muscle}
+                    className="text-xs text-[#8D949E] bg-[#1A1E23] px-2.5 py-1 rounded-md"
+                  >
+                    {muscle}
+                  </span>
+                ))}
+
+              </div>
+
+
+              {/* Workout Info */}
+              <div className="grid grid-cols-2 gap-3 text-sm mb-5">
+
+                <div>
+                  <p className="text-[#686F79] text-xs">
+                    Duration
+                  </p>
+
+                  <p className="text-white mt-1">
+                    {workout.duration} min
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-[#686F79] text-xs">
+                    Calories
+                  </p>
+
+                  <p className="text-white mt-1">
+                    {workout.caloriesBurned} kcal
+                  </p>
+                </div>
+
+              </div>
+
+
+              {/* Details Button */}
+              <Link
+                href={`/workout/${workout.id}`}
+                className="w-full h-11 rounded-lg bg-[#B7FF00] text-[#0B0D10] flex items-center justify-center font-semibold text-sm hover:bg-[#A5E900] transition"
+              >
+                View Workout
+              </Link>
+
+            </div>
+
+          </article>
+
+        ))}
+
+      </section>
+
+    </main>
   );
-}
+};
+
+export default WorkoutBody;
