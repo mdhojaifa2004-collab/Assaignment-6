@@ -44,7 +44,7 @@ export default function NavbarPage() {
   return (
     <nav className="w-full h-16 bg-[#0B0D10] border-b border-[#20242A] flex items-center px-6">
 
-      {/* LOGO */}
+      ==============================={/* LOGO */}
       <div className="flex items-center w-1/3">
         <Link
           href="/"
@@ -62,7 +62,7 @@ export default function NavbarPage() {
         </Link>
       </div>
 
-      {/* CENTER */}
+      ============================{/* CENTER */}
       <div className="flex justify-center items-center w-1/3">
         <div className="flex items-center gap-3">
 
@@ -83,7 +83,7 @@ export default function NavbarPage() {
         </div>
       </div>
 
-      {/* RIGHT */}
+      =============================={/* RIGHT */}
       <div className="flex items-center justify-end gap-6 w-1/3">
 
         <Link
