@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Challenge Requirements — 10 Marks
+C1. - Sort dropdown:
+"Sort By" → options Duration, Calories, Rating (default Duration, with chevron icon); it re-sorts the current list.
 
-## Getting Started
+C2. GitHub README
+Add a well-designed README.md that includes:
+Project name: FITLOG
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+***//
+**Short description:** FITLOG is a modern workout management app that helps users explore workouts, create a daily plan, save exercises, and track their progress.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+Technologies used
 
-To learn more about Next.js, take a look at the following resources:
+### Technologies Used
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Next.js**
+2. **React**
+3. **TypeScript**
+4. **Tailwind CSS**
+5. **DaisyUI**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+5 key features of the project
+C3. - On the My Plan page, each planned workout card has:
+"Mark as Done" button (with check icon) → marks the workout done, shows a toast.
+Remove (X) button → removes the workout, shows a toast.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
