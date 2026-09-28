@@ -48,8 +48,8 @@ const WorkoutBody = () => {
 
           <div>
             <h1 className="text-4xl lg:text-5xl font-bold">
-              TRAIN WITH INTENT. LOG
-              EVERY SET.
+              TRAIN WITH INTENT.
+              LOGEVERY SET.
             </h1>
 
             <p className="text-[#7D838C] mt-3 max-w-xl">

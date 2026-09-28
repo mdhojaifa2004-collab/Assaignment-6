@@ -1,33 +1,30 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 
-export default function WorkoutDetailsPage() {
+const WorkoutPage = () => {
 
-    const { id } = useParams();
-
-    const [workout, setWorkout] = useState(null);
+    const [workouts, setWorkouts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
 
-        const fetchWorkout = async () => {
+        const fetchWorkouts = async () => {
 
             try {
 
                 const res = await fetch(
-                    `https://api.abcz.workers.dev/api/fitlog/${id}`
+                    "https://api.abcz.workers.dev/api/fitlog"
                 );
 
                 const data = await res.json();
 
-                setWorkout(data);
+                setWorkouts(data);
 
             } catch (error) {
 
-                console.error("Failed to load workout:", error);
+                console.error("Failed to fetch workouts:", error);
 
             } finally {
 
@@ -37,14 +34,11 @@ export default function WorkoutDetailsPage() {
 
         };
 
-        if (id) {
-            fetchWorkout();
-        }
+        fetchWorkouts();
 
-    }, [id]);
+    }, []);
 
 
-    /* Loading */
     if (loading) {
 
         return (
@@ -58,179 +52,106 @@ export default function WorkoutDetailsPage() {
     }
 
 
-    /* If workout not found */
-    if (!workout) {
-
-        return (
-            <main className="min-h-screen bg-[#0B0D10] text-white flex flex-col items-center justify-center">
-
-                <h1 className="text-2xl font-bold">
-                    Workout not found
-                </h1>
-
-                <Link
-                    href="/workout"
-                    className="mt-5 px-5 py-3 bg-[#B7FF00] text-black rounded-lg font-semibold"
-                >
-                    Back to workouts
-                </Link>
-
-            </main>
-        );
-
-    }
-
-
     return (
 
-        <main className="min-h-screen bg-[#0B0D10] text-white">
+        <main className="min-h-screen bg-[#0B0D10] text-white px-6 lg:px-12 py-10">
 
-            {/* ================= MAIN ================= */}
+            {/* Header */}
 
-            <div className="max-w-[1180px] mx-auto px-5 lg:px-8 py-10">
+            <section className="mb-10">
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-7">
+                <p className="text-[#B7FF00] text-sm font-semibold uppercase tracking-widest mb-3">
+                    WORKOUT LIBRARY
+                </p>
 
+                <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
 
-                    {/* ================= IMAGE ================= */}
+                    <div>
 
-                    <div className="rounded-xl overflow-hidden bg-[#12161B]">
+                        <h1 className="text-4xl lg:text-5xl font-bold">
+                            TRAIN WITH INTENT.
+                            <br />
+                            LOG EVERY SET.
+                        </h1>
 
-                        <img
-                            src={workout.image}
-                            alt={workout.name}
-                            className="w-full h-[500px] object-cover"
-                        />
+                        <p className="text-[#7D838C] mt-3 max-w-xl">
+                            FitLog is a dark, no-nonsense gym companion:
+                            pick a lift, lock it into today's plan,
+                            and watch the week's work add up.
+                        </p>
 
                     </div>
 
+                    <div className="text-sm text-[#7D838C]">
+                        {workouts.length} workouts available
+                    </div>
 
-                    {/* ================= DETAILS ================= */}
+                </div>
 
-                    <div className="flex flex-col">
-
-                        {/* Title */}
-
-                        <h1 className="text-3xl md:text-4xl font-extrabold uppercase">
-                            {workout.name}
-                        </h1>
+            </section>
 
 
-                        {/* Description */}
+            {/* Filters */}
 
-                        <p className="mt-3 text-[#8D949E] leading-relaxed">
-                            {workout.description}
-                        </p>
+            <section className="flex flex-wrap gap-3 mb-8">
 
+                <button className="px-5 py-2.5 rounded-lg bg-[#B7FF00] text-[#0B0D10] font-semibold text-sm">
+                    All
+                </button>
 
-                        {/* Muscle Groups */}
+                <button className="px-5 py-2.5 rounded-lg bg-[#12161B] border border-[#292E35] text-[#A6ABB3] hover:text-white transition text-sm">
+                    Beginner
+                </button>
 
-                        <div className="flex flex-wrap gap-2 mt-4">
+                <button className="px-5 py-2.5 rounded-lg bg-[#12161B] border border-[#292E35] text-[#A6ABB3] hover:text-white transition text-sm">
+                    Intermediate
+                </button>
 
-                            {workout.muscleGroups?.map((muscle) => (
+                <button className="px-5 py-2.5 rounded-lg bg-[#12161B] border border-[#292E35] text-[#A6ABB3] hover:text-white transition text-sm">
+                    Advanced
+                </button>
 
-                                <span
-                                    key={muscle}
-                                    className="px-3 py-1 rounded-full bg-[#B7FF00] text-black text-xs font-bold"
-                                >
-                                    {muscle}
-                                </span>
-
-                            ))}
-
-                        </div>
+            </section>
 
 
-                        {/* ================= INFO TABLE ================= */}
+            {/* Cards */}
 
-                        <div className="mt-5 rounded-xl overflow-hidden border border-[#252B32] bg-[#12161B]">
+            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
 
-                            <div className="flex justify-between px-4 py-3 border-b border-[#252B32]">
+                {workouts.map((workout) => (
 
-                                <span className="text-[10px] uppercase text-[#737A84]">
-                                    Equipment
-                                </span>
+                    <article
+                        key={workout.id}
+                        className="group bg-[#12161B] border border-[#20242A] rounded-2xl overflow-hidden hover:border-[#B7FF00]/50 transition duration-300"
+                    >
 
-                                <span className="text-xs">
-                                    {workout.equipment}
-                                </span>
+                        {/* Image */}
 
-                            </div>
+                        <div className="relative h-52 overflow-hidden">
 
+                            <img
+                                src={workout.image}
+                                alt={workout.name}
+                                className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                            />
 
-                            <div className="flex justify-between px-4 py-3 border-b border-[#252B32]">
+                            {/* Difficulty */}
 
-                                <span className="text-[10px] uppercase text-[#737A84]">
-                                    Difficulty
-                                </span>
+                            <div className="absolute top-3 left-3">
 
-                                <span className="text-xs">
+                                <span className="px-3 py-1.5 rounded-full bg-[#0B0D10]/80 backdrop-blur-sm text-xs font-medium text-[#B7FF00]">
                                     {workout.difficulty}
                                 </span>
 
                             </div>
 
 
-                            <div className="flex justify-between px-4 py-3 border-b border-[#252B32]">
+                            {/* Rating */}
 
-                                <span className="text-[10px] uppercase text-[#737A84]">
-                                    Sets
-                                </span>
+                            <div className="absolute top-3 right-3">
 
-                                <span className="text-xs">
-                                    {workout.sets}
-                                </span>
-
-                            </div>
-
-
-                            <div className="flex justify-between px-4 py-3 border-b border-[#252B32]">
-
-                                <span className="text-[10px] uppercase text-[#737A84]">
-                                    Reps
-                                </span>
-
-                                <span className="text-xs">
-                                    {workout.reps}
-                                </span>
-
-                            </div>
-
-
-                            <div className="flex justify-between px-4 py-3 border-b border-[#252B32]">
-
-                                <span className="text-[10px] uppercase text-[#737A84]">
-                                    Duration
-                                </span>
-
-                                <span className="text-xs">
-                                    {workout.duration} min
-                                </span>
-
-                            </div>
-
-
-                            <div className="flex justify-between px-4 py-3 border-b border-[#252B32]">
-
-                                <span className="text-[10px] uppercase text-[#737A84]">
-                                    Calories
-                                </span>
-
-                                <span className="text-xs">
-                                    {workout.caloriesBurned} kcal
-                                </span>
-
-                            </div>
-
-
-                            <div className="flex justify-between px-4 py-3">
-
-                                <span className="text-[10px] uppercase text-[#737A84]">
-                                    Rating
-                                </span>
-
-                                <span className="text-xs">
-                                    {workout.rating}
+                                <span className="px-3 py-1.5 rounded-full bg-[#0B0D10]/80 backdrop-blur-sm text-xs text-white">
+                                    ★ {workout.rating}
                                 </span>
 
                             </div>
@@ -238,66 +159,88 @@ export default function WorkoutDetailsPage() {
                         </div>
 
 
-                        {/* ================= INSTRUCTIONS ================= */}
+                        {/* Content */}
 
-                        <div className="mt-5">
+                        <div className="p-5">
 
-                            <h2 className="text-sm font-bold uppercase">
-                                Instructions
+                            <h2 className="text-lg font-bold text-white mb-2">
+                                {workout.name}
                             </h2>
 
 
-                            <ol className="mt-3 space-y-2">
+                            {/* Muscle Groups */}
 
-                                {workout.instructions?.map(
-                                    (instruction, index) => (
+                            <div className="flex flex-wrap gap-2 mb-4">
 
-                                        <li
-                                            key={index}
-                                            className="text-xs text-[#9AA1AA]"
+                                {workout.muscleGroups.map(
+                                    (muscle: string) => (
+
+                                        <span
+                                            key={muscle}
+                                            className="text-xs text-[#8D949E] bg-[#1A1E23] px-2.5 py-1 rounded-md"
                                         >
-                                            <span className="mr-2">
-                                                {index + 1}.
-                                            </span>
-
-                                            {instruction}
-
-                                        </li>
+                                            {muscle}
+                                        </span>
 
                                     )
                                 )}
 
-                            </ol>
+                            </div>
+
+
+                            {/* Info */}
+
+                            <div className="grid grid-cols-2 gap-3 text-sm mb-5">
+
+                                <div>
+
+                                    <p className="text-[#686F79] text-xs">
+                                        Duration
+                                    </p>
+
+                                    <p className="text-white mt-1">
+                                        {workout.duration} min
+                                    </p>
+
+                                </div>
+
+
+                                <div>
+
+                                    <p className="text-[#686F79] text-xs">
+                                        Calories
+                                    </p>
+
+                                    <p className="text-white mt-1">
+                                        {workout.caloriesBurned} kcal
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            {/* View Details */}
+
+                            <Link
+                                href={`/workout/${workout.id}`}
+                                className="w-full h-11 rounded-lg bg-[#B7FF00] text-[#0B0D10] flex items-center justify-center font-semibold text-sm hover:bg-[#A5E900] transition"
+                            >
+                                View Workout
+                            </Link>
 
                         </div>
 
+                    </article>
 
-                        {/* ================= BUTTONS ================= */}
+                ))}
 
-                        <div className="flex gap-3 mt-6">
-
-                            <button
-                                className="px-5 py-3 rounded-lg bg-[#B7FF00] text-black text-xs font-bold hover:bg-[#c8ff4d] transition"
-                            >
-                                Add to today's plan
-                            </button>
-
-
-                            <button
-                                className="px-5 py-3 rounded-lg border border-[#353B43] text-white text-xs font-medium hover:bg-[#12161B] transition"
-                            >
-                                ♡ Save for later
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
+            </section>
 
         </main>
 
     );
-}
+
+};
+
+export default WorkoutPage;
