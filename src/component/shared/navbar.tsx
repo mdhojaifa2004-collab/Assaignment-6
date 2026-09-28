@@ -9,8 +9,13 @@ export default function NavbarPage() {
 
   const updateCounts = () => {
     try {
-      const plan = JSON.parse(localStorage.getItem("fitlog-plan") || "[]");
-      const saved = JSON.parse(localStorage.getItem("fitlog-saved") || "[]");
+      const plan = JSON.parse(
+        localStorage.getItem("fitlog-plan") || "[]"
+      );
+
+      const saved = JSON.parse(
+        localStorage.getItem("fitlog-saved") || "[]"
+      );
 
       setPlanCount(Array.isArray(plan) ? plan.length : 0);
       setSavedCount(Array.isArray(saved) ? saved.length : 0);
@@ -23,19 +28,28 @@ export default function NavbarPage() {
   useEffect(() => {
     updateCounts();
 
-    window.addEventListener("fitlog-storage-update", updateCounts);
+    window.addEventListener(
+      "fitlog-storage-update",
+      updateCounts
+    );
 
     return () => {
-      window.removeEventListener("fitlog-storage-update", updateCounts);
+      window.removeEventListener(
+        "fitlog-storage-update",
+        updateCounts
+      );
     };
   }, []);
 
   return (
     <nav className="w-full h-16 bg-[#0B0D10] border-b border-[#20242A] flex items-center px-6">
 
-      {/* LEFT - LOGO */}
+      {/* LOGO */}
       <div className="flex items-center w-1/3">
-        <Link href="/" className="flex items-center gap-2">
+        <Link
+          href="/"
+          className="flex items-center gap-2"
+        >
           <img
             src="/logo.png"
             alt="FITLOG"
@@ -70,46 +84,24 @@ export default function NavbarPage() {
       </div>
 
       {/* RIGHT */}
-      <div className="flex items-center justify-end gap-5 w-1/3">
+      <div className="flex items-center justify-end gap-6 w-1/3">
 
-        {/* PLAN */}
         <Link
           href="/myplan"
-          className="flex items-center gap-1.5 text-[#A6ABB3] hover:text-white text-[11px] transition"
+          className="text-[#A6ABB3] hover:text-white text-[11px] transition"
         >
-          <span>Plan</span>
-
-          <span className="min-w-[18px] h-[18px] px-1 rounded-full bg-[#B7FF00] text-[#0B0D10] flex items-center justify-center text-[9px] font-bold">
-            {planCount}
-          </span>
+          Plan {planCount}
         </Link>
 
-        {/* GREEN DOT */}
-        <div className="w-5 h-5 rounded-full bg-[#B7FF00] flex items-center justify-center">
-          <span className="text-[#0B0D10] text-[8px]">●</span>
-        </div>
-
-        {/* SAVED */}
         <Link
           href="/myplan?tab=saved"
-          className="flex items-center gap-1.5 text-[#A6ABB3] hover:text-white text-[11px] transition"
+          className="text-[#A6ABB3] hover:text-white text-[11px] transition"
         >
-          <span>Saved</span>
-
-          <span className="min-w-[18px] h-[18px] px-1 rounded-full bg-[#B7FF00] text-[#0B0D10] flex items-center justify-center text-[9px] font-bold">
-            {savedCount}
-          </span>
+          Saved {savedCount}
         </Link>
 
-        {/* PROFILE */}
-        <button
-          type="button"
-          className="w-7 h-7 rounded-full border border-[#30353D] bg-[#171B20] text-[#8D949E] flex items-center justify-center text-[10px]"
-        >
-          ●
-        </button>
-
       </div>
+
     </nav>
   );
 }

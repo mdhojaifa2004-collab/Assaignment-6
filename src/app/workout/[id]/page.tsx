@@ -348,8 +348,8 @@ export default function WorkoutDetailsPage() {
                 className="px-6 py-3 rounded-lg border border-[#30353D] text-white hover:bg-[#171B20]"
               >
                 {isSaved
-                  ? "♥ Saved"
-                  : "♡ Save for later"}
+                  ? "Saved"
+                  : "Save for later"}
               </button>
 
             </div>
