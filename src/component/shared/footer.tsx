@@ -4,7 +4,7 @@ const FoterPage = () => {
 
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
 
-        ========================{/* LEFT */}
+        {/* ========================LEFT */}
         <div className="flex items-center gap-3">
 
           <div className="w-8 h-8 rounded-lg bg-[#B7FF00] flex items-center justify-center">
@@ -19,7 +19,7 @@ const FoterPage = () => {
 
         </div>
 
-        ========================{/* RIGHT */}
+        {/* ========================RIGHT */}
         <div className="flex items-center gap-5">
 
           <a

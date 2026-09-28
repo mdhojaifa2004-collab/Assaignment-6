@@ -56,7 +56,7 @@ const WorkoutPage = () => {
 
         <main className="min-h-screen bg-[#0B0D10] text-white px-6 lg:px-12 py-10">
 
-            ------------------------------{/* Header */}
+            {/* ------------------------------Header */}
 
             <section className="mb-10">
 
@@ -91,7 +91,7 @@ const WorkoutPage = () => {
             </section>
 
 
-            ------------------------------{/* Filters */}
+            {/* ------------------------------Filters */}
 
             <section className="flex flex-wrap gap-3 mb-8">
 
@@ -114,7 +114,7 @@ const WorkoutPage = () => {
             </section>
 
 
-            ====================================={/* Cards */}
+            {/* =====================================Cards */}
 
             <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
 

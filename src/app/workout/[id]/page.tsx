@@ -205,7 +205,7 @@ export default function WorkoutDetailsPage() {
 
       <div className="max-w-6xl mx-auto">
 
-      ==================================  {/* BACK */}
+      {/* ==================================  BACK */}
         <Link
           href="/workout"
           className="text-[#8D949E] hover:text-white text-sm"
@@ -213,7 +213,7 @@ export default function WorkoutDetailsPage() {
           ← Back to workouts
         </Link>
 
-      =========================  {/* MAIN */}
+      {/* =========================  MAIN */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mt-8">
 
           {/* IMAGE */}
@@ -357,7 +357,7 @@ export default function WorkoutDetailsPage() {
           </div>
         </div>
 
-       ===================================== {/* INSTRUCTIONS */}
+       {/* ===================================== INSTRUCTIONS */}
         <div className="mt-14 max-w-4xl">
 
           <h2 className="text-2xl font-bold mb-6">
