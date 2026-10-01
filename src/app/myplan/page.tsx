@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 
 interface Workout {
   id: number;
@@ -21,98 +20,162 @@ interface Workout {
 }
 
 export default function MyPlanPage() {
-  const searchParams = useSearchParams();
 
-  const [activeTab, setActiveTab] = useState<"plan" | "saved">("plan");
-
+  // Plan workouts
   const [plan, setPlan] = useState<Workout[]>([]);
+
+  // Saved workouts
   const [saved, setSaved] = useState<Workout[]>([]);
 
+  // Current tab
+  const [activeTab, setActiveTab] = useState("plan");
+
+  // Sorting
   const [sortBy, setSortBy] = useState("duration");
 
+  // Completed workouts
+  const [doneWorkouts, setDoneWorkouts] = useState<number[]>([]);
+
+  // Toast message
+  const [message, setMessage] = useState("");
+
+
   // LOAD DATA
-  const loadData = () => {
-    try {
-      const planData = JSON.parse(
-        localStorage.getItem("fitlog-plan") || "[]"
-      );
-
-      const savedData = JSON.parse(
-        localStorage.getItem("fitlog-saved") || "[]"
-      );
-
-      setPlan(Array.isArray(planData) ? planData : []);
-      setSaved(Array.isArray(savedData) ? savedData : []);
-    } catch {
-      setPlan([]);
-      setSaved([]);
-    }
-  };
-
-  // INITIAL LOAD
   useEffect(() => {
-    loadData();
 
-    window.addEventListener(
-      "fitlog-storage-update",
-      loadData
+    const savedPlan = JSON.parse(
+      localStorage.getItem("fitlog-plan") || "[]"
     );
 
-    return () => {
-      window.removeEventListener(
-        "fitlog-storage-update",
-        loadData
-      );
-    };
+    const savedItems = JSON.parse(
+      localStorage.getItem("fitlog-saved") || "[]"
+    );
+
+    const doneItems = JSON.parse(
+      localStorage.getItem("fitlog-done") || "[]"
+    );
+
+    setPlan(
+      Array.isArray(savedPlan) ? savedPlan : []
+    );
+
+    setSaved(
+      Array.isArray(savedItems) ? savedItems : []
+    );
+
+    setDoneWorkouts(
+      Array.isArray(doneItems) ? doneItems : []
+    );
+
   }, []);
 
-  // OPEN SAVED TAB FROM NAVBAR
+
+  // CHECK URL
+  // This allows Navbar "Saved" button to open Saved tab
   useEffect(() => {
-    if (searchParams.get("tab") === "saved") {
+
+    const params = new URLSearchParams(
+      window.location.search
+    );
+
+    if (params.get("tab") === "saved") {
       setActiveTab("saved");
     }
-  }, [searchParams]);
+
+  }, []);
+
+
+  // TOAST
+  const showMessage = (text: string) => {
+
+    setMessage(text);
+
+    setTimeout(() => {
+      setMessage("");
+    }, 2000);
+
+  };
+
+
+  // MARK AS DONE
+  const markAsDone = (id: number) => {
+
+    if (doneWorkouts.includes(id)) {
+      return;
+    }
+
+    const newDoneList = [
+      ...doneWorkouts,
+      id
+    ];
+
+    setDoneWorkouts(newDoneList);
+
+    localStorage.setItem(
+      "fitlog-done",
+      JSON.stringify(newDoneList)
+    );
+
+    showMessage("Workout marked as done!");
+
+  };
+
 
   // REMOVE FROM PLAN
   const removeFromPlan = (id: number) => {
+
     const newPlan = plan.filter(
-      (item) => item.id !== id
+      (workout) => workout.id !== id
     );
+
+    setPlan(newPlan);
 
     localStorage.setItem(
       "fitlog-plan",
       JSON.stringify(newPlan)
     );
 
-    setPlan(newPlan);
-
     window.dispatchEvent(
       new Event("fitlog-storage-update")
     );
+
+    showMessage("Workout removed!");
+
   };
+
 
   // REMOVE FROM SAVED
   const removeFromSaved = (id: number) => {
+
     const newSaved = saved.filter(
-      (item) => item.id !== id
+      (workout) => workout.id !== id
     );
+
+    setSaved(newSaved);
 
     localStorage.setItem(
       "fitlog-saved",
       JSON.stringify(newSaved)
     );
 
-    setSaved(newSaved);
-
     window.dispatchEvent(
       new Event("fitlog-storage-update")
     );
+
+    showMessage("Workout unsaved!");
+
   };
 
-  // SORT
-  const currentItems =
-    activeTab === "plan" ? plan : saved;
 
+  // CURRENT LIST
+  let currentItems = plan;
+
+  if (activeTab === "saved") {
+    currentItems = saved;
+  }
+
+
+  // SORT WORKOUTS
   const sortedItems = [...currentItems].sort(
     (a, b) => {
 
@@ -132,25 +195,45 @@ export default function MyPlanPage() {
     }
   );
 
-  // PLAN TOTALS
+
+  // TOTAL MINUTES
   const totalMinutes = plan.reduce(
-    (total, workout) =>
-      total + Number(workout.duration || 0),
+    (total, workout) => {
+      return total + workout.duration;
+    },
     0
   );
 
+
+  // TOTAL CALORIES
   const totalCalories = plan.reduce(
-    (total, workout) =>
-      total + Number(workout.caloriesBurned || 0),
+    (total, workout) => {
+      return total + workout.caloriesBurned;
+    },
     0
   );
+
 
   return (
+
     <main className="min-h-screen bg-[#0B0D10] text-white px-6 py-10">
 
       <div className="max-w-6xl mx-auto">
 
+
+        {/* TOAST */}
+
+        {message && (
+
+          <div className="fixed top-20 right-5 z-50 bg-[#B7FF00] text-[#0B0D10] px-5 py-3 rounded-lg shadow-lg text-sm font-semibold">
+            ✓ {message}
+          </div>
+
+        )}
+
+
         {/* HEADER */}
+
         <div className="mb-10">
 
           <h1 className="text-4xl font-bold">
@@ -164,10 +247,13 @@ export default function MyPlanPage() {
 
         </div>
 
+
         {/* STATS */}
+
         <div className="grid grid-cols-3 gap-4 mb-10">
 
           <div className="bg-[#12161B] border border-[#20242A] rounded-xl p-5">
+
             <p className="text-[#8D949E] text-xs uppercase">
               Exercises
             </p>
@@ -175,9 +261,12 @@ export default function MyPlanPage() {
             <p className="text-3xl font-bold mt-2">
               {plan.length}
             </p>
+
           </div>
 
+
           <div className="bg-[#12161B] border border-[#20242A] rounded-xl p-5">
+
             <p className="text-[#8D949E] text-xs uppercase">
               Minutes
             </p>
@@ -185,9 +274,12 @@ export default function MyPlanPage() {
             <p className="text-3xl font-bold mt-2">
               {totalMinutes}
             </p>
+
           </div>
 
+
           <div className="bg-[#12161B] border border-[#20242A] rounded-xl p-5">
+
             <p className="text-[#8D949E] text-xs uppercase">
               Calories
             </p>
@@ -195,12 +287,15 @@ export default function MyPlanPage() {
             <p className="text-3xl font-bold mt-2">
               {totalCalories}
             </p>
+
           </div>
 
         </div>
 
+
         {/* TABS + SORT */}
-        <div className="flex items-center justify-between border-b border-[#20242A] mb-8">
+
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-[#20242A] mb-8 gap-4">
 
           <div className="flex gap-6">
 
@@ -215,6 +310,7 @@ export default function MyPlanPage() {
               Today's Plan ({plan.length})
             </button>
 
+
             <button
               onClick={() => setActiveTab("saved")}
               className={`pb-3 text-sm ${
@@ -228,11 +324,15 @@ export default function MyPlanPage() {
 
           </div>
 
+
+          {/* SORT */}
+
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="bg-[#12161B] border border-[#30353D] text-white text-xs rounded-lg px-3 py-2 mb-2 outline-none"
+            className="bg-[#12161B] border border-[#30353D] text-white text-xs rounded-lg px-4 py-2 mb-2"
           >
+
             <option value="duration">
               Sort by Duration
             </option>
@@ -244,11 +344,14 @@ export default function MyPlanPage() {
             <option value="rating">
               Sort by Rating
             </option>
+
           </select>
 
         </div>
 
+
         {/* EMPTY */}
+
         {sortedItems.length === 0 ? (
 
           <div className="text-center py-20">
@@ -276,7 +379,8 @@ export default function MyPlanPage() {
 
         ) : (
 
-          /* WORKOUT LIST */
+          /* WORKOUT CARDS */
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
             {sortedItems.map((workout) => (
@@ -288,17 +392,21 @@ export default function MyPlanPage() {
 
                 <div className="flex">
 
+
                   {/* IMAGE */}
+
                   <img
                     src={workout.image}
                     alt={workout.name}
                     className="w-36 h-36 object-cover"
                   />
 
+
                   {/* CONTENT */}
+
                   <div className="p-4 flex-1">
 
-                    <div className="flex items-start justify-between gap-3">
+                    <div className="flex justify-between gap-3">
 
                       <div>
 
@@ -318,6 +426,9 @@ export default function MyPlanPage() {
 
                     </div>
 
+
+                    {/* INFO */}
+
                     <div className="flex gap-4 mt-4 text-xs text-[#8D949E]">
 
                       <span>
@@ -330,8 +441,13 @@ export default function MyPlanPage() {
 
                     </div>
 
+
                     {/* BUTTONS */}
-                    <div className="flex gap-2 mt-4">
+
+                    <div className="flex gap-2 mt-4 flex-wrap">
+
+
+                      {/* VIEW */}
 
                       <Link
                         href={`/workout/${workout.id}`}
@@ -340,18 +456,56 @@ export default function MyPlanPage() {
                         View
                       </Link>
 
-                      {activeTab === "plan" ? (
 
-                        <button
-                          onClick={() =>
-                            removeFromPlan(workout.id)
-                          }
-                          className="px-3 py-1.5 rounded text-xs bg-red-500/10 text-red-400"
-                        >
-                          Remove
-                        </button>
+                      {/* PLAN BUTTONS */}
 
-                      ) : (
+                      {activeTab === "plan" && (
+
+                        <>
+
+                          {/* MARK DONE */}
+
+                          <button
+                            onClick={() =>
+                              markAsDone(workout.id)
+                            }
+                            disabled={doneWorkouts.includes(workout.id)}
+                            className={`px-3 py-1.5 rounded text-xs ${
+                              doneWorkouts.includes(workout.id)
+                                ? "bg-[#24300B] text-[#B7FF00]"
+                                : "bg-[#B7FF00] text-[#0B0D10]"
+                            }`}
+                          >
+
+                            ✓{" "}
+
+                            {doneWorkouts.includes(workout.id)
+                              ? "Done"
+                              : "Mark as Done"}
+
+                          </button>
+
+
+                          {/* REMOVE */}
+
+                          <button
+                            onClick={() =>
+                              removeFromPlan(workout.id)
+                            }
+                            className="w-8 h-8 rounded bg-red-500/10 text-red-400"
+                            title="Remove"
+                          >
+                            ×
+                          </button>
+
+                        </>
+
+                      )}
+
+
+                      {/* SAVED BUTTON */}
+
+                      {activeTab === "saved" && (
 
                         <button
                           onClick={() =>
@@ -381,5 +535,6 @@ export default function MyPlanPage() {
       </div>
 
     </main>
+
   );
 }

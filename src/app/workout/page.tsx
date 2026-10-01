@@ -4,243 +4,197 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
 const WorkoutPage = () => {
+  const [workouts, setWorkouts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    const [workouts, setWorkouts] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-
-        const fetchWorkouts = async () => {
-
-            try {
-
-                const res = await fetch(
-                    "https://api.abcz.workers.dev/api/fitlog"
-                );
-
-                const data = await res.json();
-
-                setWorkouts(data);
-
-            } catch (error) {
-
-                console.error("Failed to fetch workouts:", error);
-
-            } finally {
-
-                setLoading(false);
-
-            }
-
-        };
-
-        fetchWorkouts();
-
-    }, []);
-
-
-    if (loading) {
-
-        return (
-            <main className="min-h-screen bg-[#0B0D10] flex items-center justify-center">
-
-                <span className="loading loading-spinner text-[#B7FF00] loading-lg"></span>
-
-            </main>
+  // Get workouts from API
+  useEffect(() => {
+    const getWorkouts = async () => {
+      try {
+        const response = await fetch(
+          "https://api.abcz.workers.dev/api/fitlog"
         );
 
-    }
+        const data = await response.json();
 
+        setWorkouts(data);
+      } catch (error) {
+        console.log("Error loading workouts:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    getWorkouts();
+  }, []);
+
+  // Loading
+  if (loading) {
     return (
+      <main className="min-h-screen bg-[#0B0D10] flex items-center justify-center">
+        <span className="loading loading-spinner text-[#B7FF00] loading-lg"></span>
+      </main>
+    );
+  }
 
-        <main className="min-h-screen bg-[#0B0D10] text-white px-6 lg:px-12 py-10">
+  return (
+    <main className="min-h-screen bg-[#0B0D10] text-white px-6 lg:px-12 py-10">
 
-            {/* ------------------------------Header */}
+      {/* HEADER */}
+      <section className="mb-10">
 
-            <section className="mb-10">
+        <p className="text-[#B7FF00] text-sm font-semibold uppercase tracking-widest mb-3">
+          WORKOUT LIBRARY
+        </p>
 
-                <p className="text-[#B7FF00] text-sm font-semibold uppercase tracking-widest mb-3">
-                    WORKOUT LIBRARY
-                </p>
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
 
-                <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+          <div>
+            <h1 className="text-4xl lg:text-5xl font-bold">
+              TRAIN WITH INTENT.
+              <br />
+              LOG EVERY SET.
+            </h1>
 
-                    <div>
+            <p className="text-[#7D838C] mt-3 max-w-xl">
+              FitLog is a dark, no-nonsense gym companion:
+              pick a lift, lock it into today's plan,
+              and watch the week's work add up.
+            </p>
+          </div>
 
-                        <h1 className="text-4xl lg:text-5xl font-bold">
-                            TRAIN WITH INTENT.
-                            <br />
-                            LOG EVERY SET.
-                        </h1>
+          <div className="text-sm text-[#7D838C]">
+            {workouts.length} workouts available
+          </div>
 
-                        <p className="text-[#7D838C] mt-3 max-w-xl">
-                            FitLog is a dark, no-nonsense gym companion:
-                            pick a lift, lock it into today's plan,
-                            and watch the week's work add up.
-                        </p>
+        </div>
 
-                    </div>
+      </section>
 
-                    <div className="text-sm text-[#7D838C]">
-                        {workouts.length} workouts available
-                    </div>
 
-                </div>
+      {/* FILTER BUTTONS */}
+      <section className="flex flex-wrap gap-3 mb-8">
 
-            </section>
+        <button className="px-5 py-2.5 rounded-lg bg-[#B7FF00] text-[#0B0D10] font-semibold text-sm">
+          All
+        </button>
 
+        <button className="px-5 py-2.5 rounded-lg bg-[#12161B] border border-[#292E35] text-[#A6ABB3]">
+          Beginner
+        </button>
 
-            {/* ------------------------------Filters */}
+        <button className="px-5 py-2.5 rounded-lg bg-[#12161B] border border-[#292E35] text-[#A6ABB3]">
+          Intermediate
+        </button>
 
-            <section className="flex flex-wrap gap-3 mb-8">
+        <button className="px-5 py-2.5 rounded-lg bg-[#12161B] border border-[#292E35] text-[#A6ABB3]">
+          Advanced
+        </button>
 
-                <button className="px-5 py-2.5 rounded-lg bg-[#B7FF00] text-[#0B0D10] font-semibold text-sm">
-                    All
-                </button>
+      </section>
 
-                <button className="px-5 py-2.5 rounded-lg bg-[#12161B] border border-[#292E35] text-[#A6ABB3] hover:text-white transition text-sm">
-                    Beginner
-                </button>
 
-                <button className="px-5 py-2.5 rounded-lg bg-[#12161B] border border-[#292E35] text-[#A6ABB3] hover:text-white transition text-sm">
-                    Intermediate
-                </button>
+      {/* WORKOUT CARDS */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
 
-                <button className="px-5 py-2.5 rounded-lg bg-[#12161B] border border-[#292E35] text-[#A6ABB3] hover:text-white transition text-sm">
-                    Advanced
-                </button>
+        {workouts.map((workout) => (
 
-            </section>
+          <article
+            key={workout.id}
+            className="bg-[#12161B] border border-[#20242A] rounded-2xl overflow-hidden hover:border-[#B7FF00]/50 transition"
+          >
 
+            {/* IMAGE */}
+            <div className="relative h-52">
 
-            {/* =====================================Cards */}
+              <img
+                src={workout.image}
+                alt={workout.name}
+                className="w-full h-full object-cover"
+              />
 
-            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              {/* DIFFICULTY */}
+              <span className="absolute top-3 left-3 px-3 py-1.5 rounded-full bg-[#0B0D10]/80 text-xs text-[#B7FF00]">
+                {workout.difficulty}
+              </span>
 
-                {workouts.map((workout) => (
+              {/* RATING */}
+              <span className="absolute top-3 right-3 px-3 py-1.5 rounded-full bg-[#0B0D10]/80 text-xs">
+                ★ {workout.rating}
+              </span>
 
-                    <article
-                        key={workout.id}
-                        className="group bg-[#12161B] border border-[#20242A] rounded-2xl overflow-hidden hover:border-[#B7FF00]/50 transition duration-300"
-                    >
+            </div>
 
-                        {/* Image */}
 
-                        <div className="relative h-52 overflow-hidden">
+            {/* CARD CONTENT */}
+            <div className="p-5">
 
-                            <img
-                                src={workout.image}
-                                alt={workout.name}
-                                className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                            />
+              <h2 className="text-lg font-bold mb-2">
+                {workout.name}
+              </h2>
 
-                            {/* Difficulty */}
 
-                            <div className="absolute top-3 left-3">
+              {/* MUSCLE GROUPS */}
+              <div className="flex flex-wrap gap-2 mb-4">
 
-                                <span className="px-3 py-1.5 rounded-full bg-[#0B0D10]/80 backdrop-blur-sm text-xs font-medium text-[#B7FF00]">
-                                    {workout.difficulty}
-                                </span>
+                {workout.muscleGroups.map((muscle: string) => (
 
-                            </div>
-
-
-                            {/* Rating */}
-
-                            <div className="absolute top-3 right-3">
-
-                                <span className="px-3 py-1.5 rounded-full bg-[#0B0D10]/80 backdrop-blur-sm text-xs text-white">
-                                    ★ {workout.rating}
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-                        {/* Content */}
-
-                        <div className="p-5">
-
-                            <h2 className="text-lg font-bold text-white mb-2">
-                                {workout.name}
-                            </h2>
-
-
-                            {/* Muscle Groups */}
-
-                            <div className="flex flex-wrap gap-2 mb-4">
-
-                                {workout.muscleGroups.map(
-                                    (muscle: string) => (
-
-                                        <span
-                                            key={muscle}
-                                            className="text-xs text-[#8D949E] bg-[#1A1E23] px-2.5 py-1 rounded-md"
-                                        >
-                                            {muscle}
-                                        </span>
-
-                                    )
-                                )}
-
-                            </div>
-
-
-                            {/* Info */}
-
-                            <div className="grid grid-cols-2 gap-3 text-sm mb-5">
-
-                                <div>
-
-                                    <p className="text-[#686F79] text-xs">
-                                        Duration
-                                    </p>
-
-                                    <p className="text-white mt-1">
-                                        {workout.duration} min
-                                    </p>
-
-                                </div>
-
-
-                                <div>
-
-                                    <p className="text-[#686F79] text-xs">
-                                        Calories
-                                    </p>
-
-                                    <p className="text-white mt-1">
-                                        {workout.caloriesBurned} kcal
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-
-                            {/* View Details */}
-
-                            <Link
-                                href={`/workout/${workout.id}`}
-                                className="w-full h-11 rounded-lg bg-[#B7FF00] text-[#0B0D10] flex items-center justify-center font-semibold text-sm hover:bg-[#A5E900] transition"
-                            >
-                                View Workout
-                            </Link>
-
-                        </div>
-
-                    </article>
+                  <span
+                    key={muscle}
+                    className="text-xs text-[#8D949E] bg-[#1A1E23] px-2.5 py-1 rounded-md"
+                  >
+                    {muscle}
+                  </span>
 
                 ))}
 
-            </section>
+              </div>
 
-        </main>
 
-    );
+              {/* INFORMATION */}
+              <div className="grid grid-cols-2 gap-3 text-sm mb-5">
 
+                <div>
+                  <p className="text-[#686F79] text-xs">
+                    Duration
+                  </p>
+
+                  <p className="mt-1">
+                    {workout.duration} min
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-[#686F79] text-xs">
+                    Calories
+                  </p>
+
+                  <p className="mt-1">
+                    {workout.caloriesBurned} kcal
+                  </p>
+                </div>
+
+              </div>
+
+
+              {/* DETAILS BUTTON */}
+              <Link
+                href={`/workout/${workout.id}`}
+                className="w-full h-11 rounded-lg bg-[#B7FF00] text-[#0B0D10] flex items-center justify-center font-semibold text-sm hover:bg-[#A5E900]"
+              >
+                View Workout
+              </Link>
+
+            </div>
+
+          </article>
+
+        ))}
+
+      </section>
+
+    </main>
+  );
 };
 
 export default WorkoutPage;
